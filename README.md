@@ -3,6 +3,8 @@
 wwek的用户自定义函数
 适用于flink
 
+flink-udf范例
+https://github.com/zjffdu/flink-udf
 
 ## 开发
 
