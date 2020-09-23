@@ -75,13 +75,13 @@ public class Phone2Region extends ScalarFunction {
     public static boolean isPhoneNumber(String phoneNumber) {
 
         if (phoneNumber.length() == 3) {
-            return (phoneNumber.charAt(0) == '1') ? true : false;
+            return (phoneNumber.charAt(0) == '1');
         } else if (phoneNumber.length() == 8) {
-            return (phoneNumber.charAt(0) == '0') ? true : false;
+            return (phoneNumber.charAt(0) == '0');
         } else if (phoneNumber.length() == 11) {
-            return (phoneNumber.charAt(0) == '0' || phoneNumber.charAt(0) == '1') ? true : false;
+            return (phoneNumber.charAt(0) == '0' || phoneNumber.charAt(0) == '1');
         } else if (phoneNumber.length() == 12) {
-            return phoneNumber.charAt(0) == '0' ? true : false;
+            return (phoneNumber.charAt(0) == '0');
         }
         return false;
 
