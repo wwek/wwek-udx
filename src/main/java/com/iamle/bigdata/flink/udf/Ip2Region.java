@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.PostConstruct;
 import java.io.File;
+import java.io.InputStream;
 import java.lang.reflect.Method;
 
 /**
@@ -43,7 +44,12 @@ public class Ip2Region extends ScalarFunction {
             String dbPath = tmpDir + File.separator + "ip2region.db";
             Log.info("init ip region db path [{}]", dbPath);
             File file = new File(dbPath);
-            FileUtils.copyInputStreamToFile(Ip2Region.class.getClassLoader().getResourceAsStream("data/ip2region.db"), file);
+
+            //从资源文件中拿db文件
+            InputStream dbF = Ip2Region.class.getClassLoader().getResourceAsStream("data/ip2region.db");
+
+            // 操作复制
+            FileUtils.copyInputStreamToFile(dbF, file);
             config = new DbConfig();
             searcher = new DbSearcher(config, dbPath);
             Log.info("bean [{}]", config);

@@ -228,6 +228,17 @@ under the License.
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<configuration>
+					<nonFilteredFileExtensions>
+						<!-- 此处配置不需要过滤的文件的后缀名 -->
+						<nonFilteredFileExtension>db</nonFilteredFileExtension>
+						<nonFilteredFileExtension>dat</nonFilteredFileExtension>
+					</nonFilteredFileExtensions>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 

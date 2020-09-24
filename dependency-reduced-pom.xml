@@ -103,6 +103,15 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <artifactId>maven-resources-plugin</artifactId>
+        <configuration>
+          <nonFilteredFileExtensions>
+            <nonFilteredFileExtension>db</nonFilteredFileExtension>
+            <nonFilteredFileExtension>dat</nonFilteredFileExtension>
+          </nonFilteredFileExtensions>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
   <repositories>

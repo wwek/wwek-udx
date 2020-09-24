@@ -3,6 +3,16 @@
 wwek的用户自定义函数
 适用于flink
 
+
+ip2region(ip,0)表示国家
+ip2region(ip,1)表示省份
+ip2region(ip,2)表示城市
+ip2region(ip,3)表示运营商
+
+
+
+
+
 flink-udf范例
 https://github.com/zjffdu/flink-udf
 
