@@ -11,16 +11,24 @@ package com.iamle.bigdata.flink.udf;
  * https://github.com/lionsoul2014/ip2region/issues/148
  */
 
+import org.apache.commons.io.FileUtils;
 import org.lionsoul.ip2region.DataBlock;
 import org.lionsoul.ip2region.DbConfig;
 import org.lionsoul.ip2region.DbSearcher;
 import org.lionsoul.ip2region.Util;
 import org.apache.flink.table.functions.ScalarFunction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.PostConstruct;
 import java.io.File;
+import java.lang.reflect.Method;
 
+/**
+ * @author wwek
+ */
 public class Ip2Region extends ScalarFunction {
+    final Logger Log = LoggerFactory.getLogger(getClass());
     DbConfig config = null;
     DbSearcher searcher = null;
 
@@ -33,15 +41,15 @@ public class Ip2Region extends ScalarFunction {
             // 因为jar无法读取文件,复制创建临时文件
             String tmpDir = System.getProperty("user.dir") + File.separator + "temp";
             String dbPath = tmpDir + File.separator + "ip2region.db";
-            log.info("init ip region db path [{}]", dbPath);
+            Log.info("init ip region db path [{}]", dbPath);
             File file = new File(dbPath);
-            FileUtils.copyInputStreamToFile(IpRegionService.class.getClassLoader().getResourceAsStream("data/ip2region.db"), file);
+            FileUtils.copyInputStreamToFile(Ip2Region.class.getClassLoader().getResourceAsStream("data/ip2region.db"), file);
             config = new DbConfig();
             searcher = new DbSearcher(config, dbPath);
-            log.info("bean [{}]", config);
-            log.info("bean [{}]", searcher);
+            Log.info("bean [{}]", config);
+            Log.info("bean [{}]", searcher);
         } catch (Exception e) {
-            log.error("init ip region error:{}", e);
+            Log.error("init ip region error:{}", e);
         }
     }
 
@@ -59,11 +67,10 @@ public class Ip2Region extends ScalarFunction {
         }
         String region = "";
 
-
         try {
             //db
             if (searcher == null) {
-                log.error("DbSearcher is null");
+                Log.error("DbSearcher is null");
                 return null;
             }
             long startTime = System.currentTimeMillis();
@@ -84,51 +91,49 @@ public class Ip2Region extends ScalarFunction {
                 case DbSearcher.MEMORY_ALGORITYM:
                     method = searcher.getClass().getMethod("memorySearch", String.class);
                     break;
+                default:
             }
 
             DataBlock dataBlock = null;
-            if (Util.isIpAddress(ip) == false) {
-                log.warn("warning: Invalid ip address");
+            if (!Util.isIpAddress(str)) {
+                Log.warn("warning: Invalid ip address");
             }
-            dataBlock = (DataBlock) method.invoke(searcher, ip);
+            dataBlock = (DataBlock) method.invoke(searcher, str);
             String result = dataBlock.getRegion();
             long endTime = System.currentTimeMillis();
-            log.debug("region use time[{}] result[{}]", endTime - startTime, result);
-            return result;
+            Log.debug("region use time[{}] result[{}]", endTime - startTime, result);
+
+            switch (c) {
+                case 0:
+                    // 贵州
+                    region = result;
+                    break;
+                case 1:
+                    // 贵阳
+                    region = result;
+                    break;
+                case 2:
+                    // ISP.CHINA_MOBILE
+                    region = result;
+
+                    // 中国移动
+                    region = result;
+                    break;
+                case 3:
+                    // 550000
+                    region = result;
+                    break;
+                case 4:
+                    // 0851
+                    region = result;
+                    break;
+                default:
+                    // 18798896741
+                    region = result;
+            }
 
         } catch (Exception e) {
-            log.error("error:{}", e);
-        }
-        return null;
-
-
-        switch (c) {
-            case 0:
-                // 贵州
-                region = found.getAttribution().getProvince();
-                break;
-            case 1:
-                // 贵阳
-                region = found.getAttribution().getCity();
-                break;
-            case 2:
-                // ISP.CHINA_MOBILE
-                region = found.getIsp().toString();
-
-                // 中国移动
-                region = found.getIsp().getCnName();
-                break;
-            case 3:
-                // 550000
-                region = found.getAttribution().getZipCode();
-                break;
-            case 4:
-                // 0851
-                region = found.getAttribution().getAreaCode();
-                break;
-            default:
-                // 18798896741
-                region = found.getNumber();
+            Log.error("error:{}", e);
         }
 
         return region;
