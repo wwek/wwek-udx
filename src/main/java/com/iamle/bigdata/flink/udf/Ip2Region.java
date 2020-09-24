@@ -1,5 +1,3 @@
-package com.iamle.bigdata.flink.udf;
-
 /**
  * ip归属地
  * <p>
@@ -11,7 +9,10 @@ package com.iamle.bigdata.flink.udf;
  * https://github.com/lionsoul2014/ip2region/issues/148
  */
 
+package com.iamle.bigdata.flink.udf;
+
 import org.apache.commons.io.FileUtils;
+import org.apache.flink.table.functions.FunctionContext;
 import org.lionsoul.ip2region.DataBlock;
 import org.lionsoul.ip2region.DbConfig;
 import org.lionsoul.ip2region.DbSearcher;
@@ -33,15 +34,13 @@ public class Ip2Region extends ScalarFunction {
     DbConfig config = null;
     DbSearcher searcher = null;
 
-    /**
-     * 初始化IP库
-     */
-    @PostConstruct
-    public void init() {
+    @Override
+    public void open(FunctionContext context) throws Exception {
         try {
             // 因为jar无法读取文件,复制创建临时文件
             String tmpDir = System.getProperty("user.dir") + File.separator + "temp";
             String dbPath = tmpDir + File.separator + "ip2region.db";
+            System.out.println(dbPath);
             Log.info("init ip region db path [{}]", dbPath);
             File file = new File(dbPath);
 
@@ -57,10 +56,11 @@ public class Ip2Region extends ScalarFunction {
         } catch (Exception e) {
             Log.error("init ip region error:{}", e);
         }
+        super.open(context);
     }
 
     public String ip2Region(String str, int c) {
-        int cLimit = 5;
+        int cLimit = 4;
         if (str.isEmpty()) {
             return str;
         }
@@ -69,9 +69,10 @@ public class Ip2Region extends ScalarFunction {
             return str;
         }
         if (c < 0 || c > cLimit) {
-            c = 0;
+            // 默认3为城市
+            c = 3;
         }
-        String region = "";
+        String region = "未识别";
 
         try {
             //db
@@ -109,33 +110,32 @@ public class Ip2Region extends ScalarFunction {
             long endTime = System.currentTimeMillis();
             Log.debug("region use time[{}] result[{}]", endTime - startTime, result);
 
+            // 国家|区域|省份|城市|ISP
+            // 中国|0|江苏省|苏州市|联通
+            String[] resultArray = result.split("\\|");
+
             switch (c) {
                 case 0:
-                    // 贵州
-                    region = result;
+                    // 国家-中国
+                    region = resultArray[0];
                     break;
                 case 1:
-                    // 贵阳
-                    region = result;
+                    // 区域-0
+                    region = resultArray[1];
                     break;
                 case 2:
-                    // ISP.CHINA_MOBILE
-                    region = result;
-
-                    // 中国移动
-                    region = result;
+                    // 省份-江苏省
+                    region = resultArray[2];
                     break;
                 case 3:
-                    // 550000
-                    region = result;
+                    // 城市-苏州市
+                    region = resultArray[3];
                     break;
                 case 4:
-                    // 0851
-                    region = result;
+                    // ISP-联通
+                    region = resultArray[4];
                     break;
                 default:
-                    // 18798896741
-                    region = result;
             }
 
         } catch (Exception e) {

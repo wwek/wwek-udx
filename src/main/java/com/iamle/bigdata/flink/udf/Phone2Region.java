@@ -9,12 +9,21 @@ package com.iamle.bigdata.flink.udf;
 
 import me.ihxq.projects.pna.PhoneNumberInfo;
 import me.ihxq.projects.pna.PhoneNumberLookup;
+import org.apache.flink.table.functions.FunctionContext;
 import org.apache.flink.table.functions.ScalarFunction;
 
 /**
  * @author wwek
  */
 public class Phone2Region extends ScalarFunction {
+
+    PhoneNumberLookup phoneNumberLookup = null;
+
+    @Override
+    public void open(FunctionContext context) throws Exception {
+        phoneNumberLookup = new PhoneNumberLookup();
+        super.open(context);
+    }
 
     public String phone2Region(String str, int c) {
         int cLimit = 5;
@@ -25,11 +34,11 @@ public class Phone2Region extends ScalarFunction {
             return str;
         }
         if (c < 0 || c > cLimit) {
-            c = 0;
+            // 默认1为城市
+            c = 1;
         }
-        String region = "";
+        String region = "未识别";
 
-        PhoneNumberLookup phoneNumberLookup = new PhoneNumberLookup();
         PhoneNumberInfo found = phoneNumberLookup.lookup(str)
                 .orElseThrow(RuntimeException::new);
         switch (c) {

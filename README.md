@@ -41,8 +41,3 @@ https://github.com/zjffdu/flink-udf
 ```
 mvn clean package -Dmaven.test.skip=true
 ```
-
-## 开发资料
-[flink 使用IntelliJ IDEA开发自定义函数](https://help.aliyun.com/document_detail/74943.html)
-[新建一个flink项目](https://ci.apache.org/projects/flink/flink-docs-release-1.11/dev/project-configuration.html)
-

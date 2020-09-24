@@ -114,6 +114,43 @@
       </plugin>
     </plugins>
   </build>
+  <profiles>
+    <profile>
+      <id>add-dependencies-for-IDEA</id>
+      <dependencies>
+        <dependency>
+          <groupId>org.apache.flink</groupId>
+          <artifactId>flink-java</artifactId>
+          <version>${flink.version}</version>
+          <scope>compile</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.apache.flink</groupId>
+          <artifactId>flink-streaming-java_${scala.binary.version}</artifactId>
+          <version>${flink.version}</version>
+          <scope>compile</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.apache.flink</groupId>
+          <artifactId>flink-table-common</artifactId>
+          <version>${flink.version}</version>
+          <scope>compile</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-log4j12</artifactId>
+          <version>1.7.7</version>
+          <scope>compile</scope>
+        </dependency>
+        <dependency>
+          <groupId>log4j</groupId>
+          <artifactId>log4j</artifactId>
+          <version>1.2.17</version>
+          <scope>compile</scope>
+        </dependency>
+      </dependencies>
+    </profile>
+  </profiles>
   <repositories>
     <repository>
       <releases>
@@ -164,16 +201,56 @@
     </dependency>
     <dependency>
       <groupId>org.apache.flink</groupId>
-      <artifactId>flink-table-common</artifactId>
+      <artifactId>flink-streaming-java_2.11</artifactId>
       <version>1.10.0</version>
       <scope>provided</scope>
       <exclusions>
+        <exclusion>
+          <artifactId>flink-runtime_2.11</artifactId>
+          <groupId>org.apache.flink</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>flink-clients_2.11</artifactId>
+          <groupId>org.apache.flink</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>flink-shaded-guava</artifactId>
+          <groupId>org.apache.flink</groupId>
+        </exclusion>
         <exclusion>
           <artifactId>flink-core</artifactId>
           <groupId>org.apache.flink</groupId>
         </exclusion>
         <exclusion>
+          <artifactId>commons-math3</artifactId>
+          <groupId>org.apache.commons</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>slf4j-api</artifactId>
+          <groupId>org.slf4j</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>jsr305</artifactId>
+          <groupId>com.google.code.findbugs</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>force-shading</artifactId>
+          <groupId>org.apache.flink</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.flink</groupId>
+      <artifactId>flink-table-common</artifactId>
+      <version>1.10.0</version>
+      <scope>provided</scope>
+      <exclusions>
+        <exclusion>
           <artifactId>flink-shaded-asm-7</artifactId>
+          <groupId>org.apache.flink</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>flink-core</artifactId>
           <groupId>org.apache.flink</groupId>
         </exclusion>
         <exclusion>
