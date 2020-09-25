@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.iamle</groupId>
   <artifactId>wwek-udx</artifactId>
-  <name>Flink UDF</name>
+  <name>wwek-udx</name>
   <version>1.0-SNAPSHOT</version>
   <url>http://www.myorganization.org</url>
   <build>
@@ -178,16 +178,8 @@
           <groupId>org.apache.flink</groupId>
         </exclusion>
         <exclusion>
-          <artifactId>commons-lang3</artifactId>
-          <groupId>org.apache.commons</groupId>
-        </exclusion>
-        <exclusion>
           <artifactId>commons-math3</artifactId>
           <groupId>org.apache.commons</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>slf4j-api</artifactId>
-          <groupId>org.slf4j</groupId>
         </exclusion>
         <exclusion>
           <artifactId>jsr305</artifactId>
@@ -226,10 +218,6 @@
           <groupId>org.apache.commons</groupId>
         </exclusion>
         <exclusion>
-          <artifactId>slf4j-api</artifactId>
-          <groupId>org.slf4j</groupId>
-        </exclusion>
-        <exclusion>
           <artifactId>jsr305</artifactId>
           <groupId>com.google.code.findbugs</groupId>
         </exclusion>
@@ -254,10 +242,6 @@
           <groupId>org.apache.flink</groupId>
         </exclusion>
         <exclusion>
-          <artifactId>slf4j-api</artifactId>
-          <groupId>org.slf4j</groupId>
-        </exclusion>
-        <exclusion>
           <artifactId>jsr305</artifactId>
           <groupId>com.google.code.findbugs</groupId>
         </exclusion>
@@ -278,12 +262,6 @@
       <artifactId>slf4j-log4j12</artifactId>
       <version>1.7.7</version>
       <scope>provided</scope>
-      <exclusions>
-        <exclusion>
-          <artifactId>slf4j-api</artifactId>
-          <groupId>org.slf4j</groupId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>log4j</groupId>

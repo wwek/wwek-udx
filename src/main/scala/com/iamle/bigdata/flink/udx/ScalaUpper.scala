@@ -1,4 +1,4 @@
-//package com.iamle.bigdata.flink.udf
+//package com.iamle.bigdata.flink.udx
 //
 //import org.apache.flink.table.functions.ScalarFunction
 //

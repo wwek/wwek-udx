@@ -9,7 +9,7 @@
  * https://github.com/lionsoul2014/ip2region/issues/148
  */
 
-package com.iamle.bigdata.flink.udf;
+package com.iamle.bigdata.flink.udx;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.flink.table.functions.FunctionContext;
@@ -21,7 +21,6 @@ import org.apache.flink.table.functions.ScalarFunction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.InputStream;
 import java.lang.reflect.Method;

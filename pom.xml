@@ -26,7 +26,7 @@ under the License.
 	<version>1.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
-	<name>Flink UDF</name>
+	<name>wwek-udx</name>
 	<url>http://www.myorganization.org</url>
 
 	<repositories>
@@ -120,6 +120,11 @@ under the License.
 			<groupId>me.ihxq.projects</groupId>
 			<artifactId>phone-number-geo</artifactId>
 			<version>1.0.6-202004</version>
+		</dependency>
+		<dependency>
+			<groupId>nl.basjes.parse.useragent</groupId>
+			<artifactId>yauaa-flink-table</artifactId>
+			<version>5.19</version>
 		</dependency>
 	</dependencies>
 

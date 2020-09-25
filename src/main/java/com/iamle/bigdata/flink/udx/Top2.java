@@ -1,4 +1,4 @@
-package com.iamle.bigdata.flink.udf;
+package com.iamle.bigdata.flink.udx;
 
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.table.functions.TableAggregateFunction;

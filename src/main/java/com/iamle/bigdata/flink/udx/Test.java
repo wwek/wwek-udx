@@ -1,4 +1,4 @@
-package com.iamle.bigdata.flink.udf;
+package com.iamle.bigdata.flink.udx;
 
 public class Test {
 
