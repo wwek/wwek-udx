@@ -251,6 +251,7 @@ under the License.
 						<!-- 此处配置不需要过滤的文件的后缀名 -->
 						<nonFilteredFileExtension>db</nonFilteredFileExtension>
 						<nonFilteredFileExtension>dat</nonFilteredFileExtension>
+						<nonFilteredFileExtension>yml</nonFilteredFileExtension>
 					</nonFilteredFileExtensions>
 				</configuration>
 			</plugin>

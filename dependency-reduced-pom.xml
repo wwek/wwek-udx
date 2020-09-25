@@ -109,6 +109,7 @@
           <nonFilteredFileExtensions>
             <nonFilteredFileExtension>db</nonFilteredFileExtension>
             <nonFilteredFileExtension>dat</nonFilteredFileExtension>
+            <nonFilteredFileExtension>yml</nonFilteredFileExtension>
           </nonFilteredFileExtensions>
         </configuration>
       </plugin>

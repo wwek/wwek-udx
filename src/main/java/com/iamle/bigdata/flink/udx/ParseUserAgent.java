@@ -24,7 +24,6 @@ import org.apache.flink.table.functions.ScalarFunction;
 public class ParseUserAgent extends ScalarFunction {
     DeviceDetector ua = null;
 
-
     public String parseUserAgent(String str, String field) {
         String resultStr = str;
         String unknown = "未知";
