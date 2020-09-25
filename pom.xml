@@ -122,10 +122,15 @@ under the License.
 			<version>1.0.6-202004</version>
 		</dependency>
 		<dependency>
-			<groupId>nl.basjes.parse.useragent</groupId>
-			<artifactId>yauaa-flink-table</artifactId>
-			<version>5.19</version>
+			<groupId>io.github.mngsk</groupId>
+			<artifactId>device-detector</artifactId>
+			<version>1.0.5</version>
 		</dependency>
+<!--		<dependency>-->
+<!--			<groupId>nl.basjes.parse.useragent</groupId>-->
+<!--			<artifactId>yauaa-flink-table</artifactId>-->
+<!--			<version>5.19</version>-->
+<!--		</dependency>-->
 	</dependencies>
 
 	<build>
