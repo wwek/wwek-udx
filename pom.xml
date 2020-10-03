@@ -45,7 +45,7 @@ under the License.
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<flink.version>1.10.0</flink.version>
+		<flink.version>1.11.2</flink.version>
 		<scala.binary.version>2.11</scala.binary.version>
 		<scala.version>2.11.12</scala.version>
 	</properties>
@@ -67,6 +67,21 @@ under the License.
 		<dependency>
 			<groupId>org.apache.flink</groupId>
 			<artifactId>flink-table-common</artifactId>
+			<version>${flink.version}</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.flink</groupId>
+			<artifactId>flink-table-api-java-bridge_2.11</artifactId>
+			<version>${flink.version}</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- or.. (for the new Blink planner) -->
+		<dependency>
+			<groupId>org.apache.flink</groupId>
+			<artifactId>flink-table-planner-blink_2.11</artifactId>
 			<version>${flink.version}</version>
 			<scope>provided</scope>
 		</dependency>
@@ -126,11 +141,11 @@ under the License.
 			<artifactId>device-detector</artifactId>
 			<version>1.0.5</version>
 		</dependency>
-<!--		<dependency>-->
-<!--			<groupId>nl.basjes.parse.useragent</groupId>-->
-<!--			<artifactId>yauaa-flink-table</artifactId>-->
-<!--			<version>5.19</version>-->
-<!--		</dependency>-->
+		<dependency>
+			<groupId>nl.basjes.parse.useragent</groupId>
+			<artifactId>yauaa-flink-table</artifactId>
+			<version>5.19</version>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -284,6 +299,25 @@ under the License.
 					<groupId>org.apache.flink</groupId>
 					<artifactId>flink-table-common</artifactId>
 					<version>${flink.version}</version>
+					<scope>compile</scope>
+				</dependency>
+				<dependency>
+					<groupId>org.apache.flink</groupId>
+					<artifactId>flink-table-api-java-bridge_2.11</artifactId>
+					<version>${flink.version}</version>
+					<scope>compile</scope>
+				</dependency>
+				<!-- or.. (for the new Blink planner) -->
+				<dependency>
+					<groupId>org.apache.flink</groupId>
+					<artifactId>flink-table-planner-blink_2.11</artifactId>
+					<version>${flink.version}</version>
+					<scope>compile</scope>
+				</dependency>
+				<dependency>
+					<groupId>org.scala-lang</groupId>
+					<artifactId>scala-library</artifactId>
+					<version>${scala.version}</version>
 					<scope>compile</scope>
 				</dependency>
 				<dependency>
