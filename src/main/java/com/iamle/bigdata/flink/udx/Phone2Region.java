@@ -12,6 +12,8 @@ import me.ihxq.projects.pna.PhoneNumberLookup;
 import org.apache.flink.table.functions.FunctionContext;
 import org.apache.flink.table.functions.ScalarFunction;
 
+import java.util.StringJoiner;
+
 /**
  * @author wwek
  */
@@ -25,60 +27,59 @@ public class Phone2Region extends ScalarFunction {
         super.open(context);
     }
 
-    public String phone2Region(String str, int c) {
-        int cLimit = 5;
+    public String phone2Region(String str, String field) {
+        String region = "未识别";
         if (str.isEmpty()) {
-            return str;
+            return region;
         }
         if (!isPhoneNumber(str)) {
             return str;
         }
-        if (c < 0 || c > cLimit) {
-            // 默认1为城市
-            c = 1;
-        }
-        String region = "未识别";
 
         PhoneNumberInfo found = phoneNumberLookup.lookup(str)
                 .orElseThrow(RuntimeException::new);
-        switch (c) {
-            case 0:
-                // 贵州
+        switch (field) {
+            case "province":
+                // 省份-贵州
                 region = found.getAttribution().getProvince();
                 break;
-            case 1:
-                // 贵阳
+            case "city":
+                // 省份-贵阳
                 region = found.getAttribution().getCity();
                 break;
-            case 2:
+            case "isp":
                 // ISP.CHINA_MOBILE
-                region = found.getIsp().toString();
+                // region = found.getIsp().toString();
 
                 // 中国移动
                 region = found.getIsp().getCnName();
                 break;
-            case 3:
+            case "zipcode":
                 // 550000
                 region = found.getAttribution().getZipCode();
                 break;
-            case 4:
+            case "areacode":
                 // 0851
                 region = found.getAttribution().getAreaCode();
                 break;
             default:
-                // 18798896741
-                region = found.getNumber();
+                // 省份,城市,运营商
+                StringJoiner sj = new StringJoiner(",");
+                sj.add(found.getAttribution().getProvince())
+                        .add(found.getAttribution().getCity())
+                        .add(found.getIsp().getCnName());
+                region = sj.toString();
         }
 
         return region;
     }
 
     public String eval(String str) {
-        return phone2Region(str, 1);
+        return phone2Region(str, "all");
     }
 
-    public String eval(String str, int c) {
-        return phone2Region(str, c);
+    public String eval(String str, String field) {
+        return phone2Region(str, field);
     }
 
     public static boolean isPhoneNumber(String phoneNumber) {

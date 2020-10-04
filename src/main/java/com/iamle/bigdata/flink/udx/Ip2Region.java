@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.InputStream;
 import java.lang.reflect.Method;
+import java.util.StringJoiner;
 
 /**
  * @author wwek
@@ -58,20 +59,13 @@ public class Ip2Region extends ScalarFunction {
         super.open(context);
     }
 
-    public String ip2Region(String str, int c) {
-        int cLimit = 4;
-        if (str.isEmpty()) {
-            return str;
-        }
+    public String doIp2Region(String str, String field) {
+        String region = "未识别";
+
         // check is ip
         if (!Util.isIpAddress(str)) {
-            return str;
+            return region;
         }
-        if (c < 0 || c > cLimit) {
-            // 默认3为城市
-            c = 3;
-        }
-        String region = "未识别";
 
         try {
             //db
@@ -113,28 +107,33 @@ public class Ip2Region extends ScalarFunction {
             // 中国|0|江苏省|苏州市|联通
             String[] resultArray = result.split("\\|");
 
-            switch (c) {
-                case 0:
+            switch (field) {
+                case "country":
                     // 国家-中国
                     region = resultArray[0];
                     break;
-                case 1:
+                case "area":
                     // 区域-0
                     region = resultArray[1];
                     break;
-                case 2:
+                case "province":
                     // 省份-江苏省
                     region = resultArray[2];
                     break;
-                case 3:
+                case "city":
                     // 城市-苏州市
                     region = resultArray[3];
                     break;
-                case 4:
-                    // ISP-联通
+                case "isp":
+                    // ISP运营商-联通
                     region = resultArray[4];
                     break;
                 default:
+                    // 国家,省份,城市,运营商,区域
+                    StringJoiner sj = new StringJoiner(",");
+                    sj.add(resultArray[0]).add(resultArray[2]).add(resultArray[3])
+                            .add(resultArray[4]).add(resultArray[1]);
+                    region = sj.toString();
             }
 
         } catch (Exception e) {
@@ -145,10 +144,10 @@ public class Ip2Region extends ScalarFunction {
     }
 
     public String eval(String str) {
-        return ip2Region(str, 1);
+        return doIp2Region(str, "all");
     }
 
-    public String eval(String str, int c) {
-        return ip2Region(str, c);
+    public String eval(String str, String field) {
+        return doIp2Region(str, field);
     }
 }
