@@ -9,6 +9,7 @@ wwek-udx 是一个 Flink 适用的自定义函数(UDX)集成包。
 包含了：
 IP地址查询归属地信息 UDF
 电话号码查询归属地信息 UDF
+UserAgent结构化解析 UDF
 等
 
 flink版本要求：
@@ -18,7 +19,7 @@ flink >= 1.11.2
 在zeppelin中使用
 ```
 %flink.conf
-flink.udf.jars /Users/wwek/Projects/bigdata/wwek-udx/target/wwek-udx-1.0-SNAPSHOT.jar
+flink.udf.jars /你的目录/wwek-udx-1.0-SNAPSHOT.jar
 
 %flink.ssql(type=update)
 show functions;
@@ -49,5 +50,6 @@ mvn clean package -Dmaven.test.skip=true
 ```
 
 ## Todo
+*[ ] 实现查询缓存提高性能
 *[ ] 对象实例化未使用单例
 *[ ] Benchmark
