@@ -3,7 +3,10 @@
  */
 package com.iamle.bigdata.flink.job;
 
+import com.iamle.bigdata.flink.udx.Ip2Region;
 import com.iamle.bigdata.flink.udx.ParseUserAgent;
+import com.iamle.bigdata.flink.udx.ParseUserAgentYauua;
+import com.iamle.bigdata.flink.udx.Phone2Region;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.table.api.EnvironmentSettings;
 import org.apache.flink.table.api.Table;
@@ -42,7 +45,10 @@ public class SsqlJob {
             " f_random INT," +
             " f_random_str STRING, " +
             " ts TIMESTAMP, " +
-            " ua STRING " +
+            " ua STRING, " +
+            " ua_yauua STRING, " +
+            " ip STRING, " +
+            " phone STRING " +
             ") with ('connector' = 'print' )";
 
     public static void main(String[] args) throws Exception {
@@ -53,16 +59,25 @@ public class SsqlJob {
 
         // 注册函数
         tEnv.createTemporarySystemFunction("ParseUserAgent", ParseUserAgent.class);
+        tEnv.createTemporarySystemFunction("ParseUserAgentYauua", ParseUserAgentYauua.class);
+        tEnv.createTemporarySystemFunction("Ip2Region", Ip2Region.class);
+        tEnv.createTemporarySystemFunction("Phone2Region", Phone2Region.class);
 
 
         tEnv.executeSql(DATA_SOURCE_SQL);
         tEnv.executeSql(PRINT_SINK_SQL);
 
         String ua = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36";
+        String ip = "223.5.5.5";
+        String phone = "13888888888";
 
-        TableResult tableResult1 =  tEnv.executeSql("INSERT INTO  sink_print " +
-                "SELECT f_sequence,f_random,f_random_str,ts,ParseUserAgent('" +
-                ua + "') as ua FROM datagen_source"
+        TableResult tableResult1 = tEnv.executeSql("INSERT INTO  sink_print " +
+                "SELECT f_sequence,f_random,f_random_str,ts," +
+                "ParseUserAgent('" + ua + "') as ua," +
+                "ParseUserAgentYauua('" + ua + "') as ua_yauua," +
+                "Ip2Region('" + ip + "') as ip," +
+                "Phone2Region('" + phone + "') as phone" +
+                " FROM datagen_source"
         );
 
         // 通过 TableResult 来获取作业状态

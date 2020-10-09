@@ -17,6 +17,8 @@ import io.github.mngsk.devicedetector.operatingsystem.OperatingSystem;
 import org.apache.flink.table.functions.FunctionContext;
 import org.apache.flink.table.functions.ScalarFunction;
 
+import java.util.StringJoiner;
+
 
 /**
  * @author wwek
@@ -67,7 +69,11 @@ public class ParseUserAgent extends ScalarFunction {
                 resultStr = detection.getClient().map(Client::toString).orElse(unknown);
                 break;
             default:
-                resultStr = detection.getClient().get().getName().get();
+                StringJoiner sj = new StringJoiner(",");
+                sj.add(detection.getDevice().map(Device::toString).orElse(unknown))
+                        .add(detection.getOperatingSystem().map(OperatingSystem::toString).orElse(unknown))
+                        .add(detection.getClient().map(Client::toString).orElse(unknown));
+                resultStr = sj.toString();
         }
         return resultStr;
     }
@@ -80,7 +86,7 @@ public class ParseUserAgent extends ScalarFunction {
     }
 
     public String eval(String str) {
-        return doParseUserAgent(str, "device");
+        return doParseUserAgent(str, "");
     }
 
     public String eval(String str, String field) {

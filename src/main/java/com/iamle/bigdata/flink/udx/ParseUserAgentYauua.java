@@ -15,6 +15,7 @@ import org.apache.flink.table.functions.ScalarFunction;
 
 import java.util.List;
 import java.util.Map;
+import java.util.StringJoiner;
 
 /**
  * @author wwek
@@ -60,6 +61,15 @@ public class ParseUserAgentYauua extends ScalarFunction {
                 resultStr = immutableUserAgent.get("client").toString();
                 break;
             default:
+                //
+                StringJoiner sj = new StringJoiner(",");
+                sj.add(immutableUserAgent.get("device").toString())
+                        .add(immutableUserAgent.get("type").toString())
+                        .add(immutableUserAgent.get("brand").toString())
+                        .add(immutableUserAgent.get("model").toString())
+                        .add(immutableUserAgent.get("os").toString())
+                        .add(immutableUserAgent.get("client").toString());
+                resultStr = sj.toString();
         }
         return resultStr;
     }
@@ -67,7 +77,7 @@ public class ParseUserAgentYauua extends ScalarFunction {
 
     @Override
     public void open(FunctionContext context) {
-         int cacheSize = 1000;
+        int cacheSize = 1000;
 
         userAgentAnalyzer = UserAgentAnalyzer
                 .newBuilder()
@@ -79,7 +89,7 @@ public class ParseUserAgentYauua extends ScalarFunction {
     }
 
     public String eval(String str) {
-        return doParseUserAgent(str, "device");
+        return doParseUserAgent(str, "");
     }
 
     public String eval(String str, String field) {
