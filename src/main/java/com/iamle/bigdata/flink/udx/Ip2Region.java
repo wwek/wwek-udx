@@ -11,6 +11,8 @@
 
 package com.iamle.bigdata.flink.udx;
 
+import com.google.common.collect.ImmutableMap;
+import com.iamle.parse.format.SpecifierParseFormat;
 import org.apache.commons.io.FileUtils;
 import org.apache.flink.table.functions.FunctionContext;
 import org.lionsoul.ip2region.DataBlock;
@@ -24,6 +26,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.InputStream;
 import java.lang.reflect.Method;
+import java.util.Map;
 import java.util.StringJoiner;
 
 /**
@@ -59,7 +62,7 @@ public class Ip2Region extends ScalarFunction {
         super.open(context);
     }
 
-    public String doIp2Region(String str, String field) {
+    public String doIp2Region(String str, String format) {
         String region = "未识别";
 
         // check is ip
@@ -104,38 +107,23 @@ public class Ip2Region extends ScalarFunction {
             Log.debug("region use time[{}] result[{}]", endTime - startTime, result);
 
             // 国家|区域|省份|城市|ISP
-            // 中国|0|江苏省|苏州市|联通
+            // 中国|华东|江苏省|苏州市|联通
             String[] resultArray = result.split("\\|");
 
-            switch (field) {
-                case "country":
-                    // 国家-中国
-                    region = resultArray[0];
-                    break;
-                case "area":
-                    // 区域-0
-                    region = resultArray[1];
-                    break;
-                case "province":
-                    // 省份-江苏省
-                    region = resultArray[2];
-                    break;
-                case "city":
-                    // 城市-苏州市
-                    region = resultArray[3];
-                    break;
-                case "isp":
-                    // ISP运营商-联通
-                    region = resultArray[4];
-                    break;
-                default:
-                    // 国家,省份,城市,运营商,区域
-                    StringJoiner sj = new StringJoiner(",");
-                    sj.add(resultArray[0]).add(resultArray[2]).add(resultArray[3])
-                            .add(resultArray[4]).add(resultArray[1]);
-                    region = sj.toString();
-            }
+            Map<String, String> resultMap = ImmutableMap.<String, String>builder()
+                    // country 国家-中国
+                    .put("country", resultArray[0])
+                    // area 区域-华东
+                    .put("area", resultArray[1])
+                    // province 省份-江苏省
+                    .put("province", resultArray[2])
+                    // city 城市-苏州市
+                    .put("city", resultArray[3])
+                    // isp ISP运营商-联通
+                    .put("isp", resultArray[4])
+                    .build();
 
+            return new SpecifierParseFormat().ip2regionParseFormat(format, resultMap);
         } catch (Exception e) {
             Log.error("error:{}", e);
         }
@@ -144,7 +132,7 @@ public class Ip2Region extends ScalarFunction {
     }
 
     public String eval(String str) {
-        return doIp2Region(str, "all");
+        return doIp2Region(str, "%c %P %C %I");
     }
 
     public String eval(String str, String field) {

@@ -4,15 +4,12 @@
 package com.iamle.bigdata.flink.job;
 
 import com.iamle.bigdata.flink.udx.Ip2Region;
+import com.iamle.bigdata.flink.udx.ParseUserAgentDd;
 import com.iamle.bigdata.flink.udx.ParseUserAgent;
-import com.iamle.bigdata.flink.udx.ParseUserAgentYauua;
 import com.iamle.bigdata.flink.udx.Phone2Region;
-import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.table.api.EnvironmentSettings;
-import org.apache.flink.table.api.Table;
 import org.apache.flink.table.api.TableEnvironment;
 import org.apache.flink.table.api.TableResult;
-import org.apache.flink.table.api.bridge.java.StreamTableEnvironment;
 
 public class SsqlJob {
 
@@ -31,7 +28,7 @@ public class SsqlJob {
             "\n" +
             " 'fields.f_sequence.kind'='sequence',\n" +
             " 'fields.f_sequence.start'='1',\n" +
-            " 'fields.f_sequence.end'='1000',\n" +
+            " 'fields.f_sequence.end'='10',\n" +
             "\n" +
             " 'fields.f_random.min'='1',\n" +
             " 'fields.f_random.max'='1000',\n" +
@@ -58,8 +55,8 @@ public class SsqlJob {
 
 
         // 注册函数
+        tEnv.createTemporarySystemFunction("ParseUserAgentDd", ParseUserAgentDd.class);
         tEnv.createTemporarySystemFunction("ParseUserAgent", ParseUserAgent.class);
-        tEnv.createTemporarySystemFunction("ParseUserAgentYauua", ParseUserAgentYauua.class);
         tEnv.createTemporarySystemFunction("Ip2Region", Ip2Region.class);
         tEnv.createTemporarySystemFunction("Phone2Region", Phone2Region.class);
 
@@ -73,16 +70,15 @@ public class SsqlJob {
 
         TableResult tableResult1 = tEnv.executeSql("INSERT INTO  sink_print " +
                 "SELECT f_sequence,f_random,f_random_str,ts," +
-                "ParseUserAgent('" + ua + "') as ua," +
-                "ParseUserAgentYauua('" + ua + "') as ua_yauua," +
                 "Ip2Region('" + ip + "') as ip," +
-                "Phone2Region('" + phone + "') as phone" +
+                "Phone2Region('" + phone + "','head%P %C|%I') as phone," +
+                "ParseUserAgent('" + ua + "') as ua," +
+                "ParseUserAgentDd('" + ua + "') as ua_dd" +
                 " FROM datagen_source"
         );
 
         // 通过 TableResult 来获取作业状态
         System.out.println(tableResult1.getJobClient().get().getJobStatus());
-
 
     }
 }

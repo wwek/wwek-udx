@@ -7,11 +7,14 @@ package com.iamle.bigdata.flink.udx;
  * https://github.com/EeeMt/phone-number-geo
  */
 
+import com.google.common.collect.ImmutableMap;
+import com.iamle.parse.format.SpecifierParseFormat;
 import me.ihxq.projects.pna.PhoneNumberInfo;
 import me.ihxq.projects.pna.PhoneNumberLookup;
 import org.apache.flink.table.functions.FunctionContext;
 import org.apache.flink.table.functions.ScalarFunction;
 
+import java.util.Map;
 import java.util.StringJoiner;
 
 /**
@@ -27,7 +30,7 @@ public class Phone2Region extends ScalarFunction {
         super.open(context);
     }
 
-    public String phone2Region(String str, String field) {
+    public String phone2Region(String str, String format) {
         String region = "未识别";
         if (str.isEmpty()) {
             return region;
@@ -38,48 +41,29 @@ public class Phone2Region extends ScalarFunction {
 
         PhoneNumberInfo found = phoneNumberLookup.lookup(str)
                 .orElseThrow(RuntimeException::new);
-        switch (field) {
-            case "province":
-                // 省份-贵州
-                region = found.getAttribution().getProvince();
-                break;
-            case "city":
-                // 省份-贵阳
-                region = found.getAttribution().getCity();
-                break;
-            case "isp":
-                // ISP.CHINA_MOBILE
-                // region = found.getIsp().toString();
 
-                // 中国移动
-                region = found.getIsp().getCnName();
-                break;
-            case "zipcode":
-                // 550000
-                region = found.getAttribution().getZipCode();
-                break;
-            case "areacode":
-                // 0851
-                region = found.getAttribution().getAreaCode();
-                break;
-            default:
-                // 省份,城市,运营商
-                StringJoiner sj = new StringJoiner(",");
-                sj.add(found.getAttribution().getProvince())
-                        .add(found.getAttribution().getCity())
-                        .add(found.getIsp().getCnName());
-                region = sj.toString();
-        }
+        Map<String, String> resultMap = ImmutableMap.<String, String>builder()
+                // province 省份-贵州
+                .put("province", found.getAttribution().getProvince())
+                // city 城市-贵阳
+                .put("city", found.getAttribution().getCity())
+                // isp ISP运营商-中国移动
+                .put("isp", found.getIsp().getCnName())
+                // zipcode 550000
+                .put("zipcode", found.getAttribution().getZipCode())
+                // areacode 0851
+                .put("areacode", found.getAttribution().getAreaCode())
+                .build();
 
-        return region;
+        return new SpecifierParseFormat().ip2regionParseFormat(format, resultMap);
     }
 
     public String eval(String str) {
-        return phone2Region(str, "all");
+        return phone2Region(str, "%P %C %I");
     }
 
-    public String eval(String str, String field) {
-        return phone2Region(str, field);
+    public String eval(String str, String format) {
+        return phone2Region(str, format);
     }
 
     public static boolean isPhoneNumber(String phoneNumber) {
