@@ -41,7 +41,8 @@ public class Ip2Region extends ScalarFunction {
     public void open(FunctionContext context) throws Exception {
         try {
             // 因为jar无法读取文件,复制创建临时文件
-            String tmpDir = System.getProperty("user.dir") + File.separator + "temp";
+            // String tmpDir = System.getProperty("user.dir") + File.separator + "temp";
+            String tmpDir = System.getProperty("java.io.tmpdir") + File.separator + "temp";
             String dbPath = tmpDir + File.separator + "ip2region.db";
             System.out.println(dbPath);
             Log.info("init ip region db path [{}]", dbPath);
